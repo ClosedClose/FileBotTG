@@ -14,3 +14,5 @@ Fill "whitelist.txt" with the settings:
 USERNAME1
 USERNAME2
 etc
+
+"settings.txt" and "whitelist.txt" should be filled line by line
