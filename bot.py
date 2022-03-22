@@ -11,7 +11,7 @@ settings = []
 token = ""
 save_path = "C:/img/"
 
-# GENERATE SETTINGS
+# GENERATE SETTINGS (COMMENT THIS BLOCK IF YOU DON'T PICK UP SETTINGS FROM FILE)
 if not os.path.exists("settings.txt"):
     with open('settings.txt', 'w') as whitelist:
         whitelist.write('erase_me_and_put_BOT_TOKEN\n')
