@@ -143,7 +143,7 @@ def get_video(message):
             print("New video: " + filename(message.from_user.username, message.message_id, ".mp4", True))
         except:
             bot.send_message(message.chat.id, "Ошибка загрузки видео (" + str(
-                message.message_id) + "), попробуйте еще раз")
+                message.message_id) + "), превышение размера файла")
             print('ERROR:\n', traceback.format_exc())
     else:
         bot.send_message(message.chat.id,
@@ -170,7 +170,7 @@ def get_document(message):
                                           ("_" + message.document.file_name), False))
         except:
             bot.send_message(message.chat.id, "Ошибка загрузки документа (" + str(
-                message.message_id) + "), попробуйте еще раз")
+                message.message_id) + "), превышение размера файла")
             print('ERROR:\n', traceback.format_exc())
 
     else:
