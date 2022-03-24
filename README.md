@@ -34,4 +34,4 @@ etc
 ```
 "settings.txt" and "whitelist.txt" should be filled line by line with no comments
 
-![cover](/img.png)
+![cover](/cover.png)
