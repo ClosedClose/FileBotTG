@@ -73,8 +73,7 @@ def notify(chat_id, message_id, media_type, status):
 
 # GET FILE
 def get_file(file_id):
-    raw = file_id
-    file_info = bot.get_file(raw)
+    file_info = bot.get_file(file_id)
     return bot.download_file(file_info.file_path)
 
 
