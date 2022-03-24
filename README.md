@@ -2,9 +2,9 @@ Welcome to FileBotTG 1.0
 
 
 Requires pyTelegramBotAPI:
-
->pip install pyTelegramBotAPI
-
+```
+pip install pyTelegramBotAPI
+```
 In case of a problem, check the rest of the dependencies in the header
 
 
