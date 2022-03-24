@@ -9,16 +9,16 @@ In case of a problem, check the rest of the dependencies in the header
 
 
 Fill "settings.txt" with the settings:
-'''
+```
 BOT_TOKEN
 PATH_TO_SAVE_FILES
 NOTIFICATIONS
-'''
+```
 
 Fill "whitelist.txt" with the settings:
-'''
+```
 USERNAME1
 USERNAME2
 etc
-'''
+```
 "settings.txt" and "whitelist.txt" should be filled line by line
