@@ -10,23 +10,24 @@ users = []
 settings = []
 token = ""
 save_path = "C:/img/"
+notifications = 1
 
-# GENERATE SETTINGS (COMMENT THIS BLOCK IF YOU DON'T PICK UP SETTINGS FROM FILE)
+# GENERATE SETTINGS
 if not os.path.exists("settings.txt"):
     with open('settings.txt', 'w') as whitelist:
         whitelist.write('erase_me_and_put_BOT_TOKEN\n')
         whitelist.write('erase_me_and_put_SAVE_PATH\n')
+        whitelist.write('1\n')
 settings = open("settings.txt").readlines()
 settings = [i.strip('\n') for i in settings]
 token = settings[0]
 save_path = settings[1]
-
+notifications = int(settings[2])
 
 # GENERATE WHITELIST
 if not os.path.exists("whitelist.txt"):
     with open('whitelist.txt', 'w') as whitelist:
         whitelist.write('erase_me_and_put_users_one_per_line\n')
-
 users = open("whitelist.txt").readlines()
 users = [i.strip('\n') for i in users]
 
@@ -48,6 +49,34 @@ def filename(user_id, mess_id, ext, save):
     return fname
 
 
+# REPLY NOTIFIER
+def notify(chat_id, message_id, media_type, status):
+    if notifications:
+        if media_type == "video":
+            if status:
+                bot.send_message(chat_id, "Видео загружено")
+            else:
+                bot.send_message(chat_id, "Ошибка загрузки видео (" + str(message_id) + "), попробуйте еще раз")
+
+        if media_type == "photo":
+            if status:
+                bot.send_message(chat_id, "Фото загружено")
+            else:
+                bot.send_message(chat_id, "Ошибка загрузки фото (" + str(message_id) + "), попробуйте еще раз")
+
+        if media_type == "document":
+            if status:
+                bot.send_message(chat_id, "Документ загружен")
+            else:
+                bot.send_message(chat_id, "Ошибка загрузки документа (" + str(message_id) + "), попробуйте еще раз")
+
+
+# GET FILE
+def get_file(file_id):
+    raw = file_id
+    file_info = bot.get_file(raw)
+    return bot.download_file(file_info.file_path)
+
 
 # INIT BOT
 bot = telebot.TeleBot(token)
@@ -63,8 +92,7 @@ def get_text(message):
         print(message.from_user.username + " send text:")
         print(message.text)
     else:
-        bot.send_message(message.chat.id,
-                         "Неизвестный пользователь: " + message.from_user.username + "\nОбратитесь к администратору")
+        bot.send_message(message.chat.id, "Неизвестный пользователь: " + message.from_user.username + "\nОбратитесь к администратору")
         # LOGGING
         print(message.from_user.username + " no auth (text)")
 
@@ -76,79 +104,55 @@ def get_photo(message):
     if message.from_user.username in users:
         # TRY GET PHOTO ORIGINAL SIZE
         try:
-            raw = message.photo[3].file_id
-            file_info = bot.get_file(raw)
-            downloaded_file = bot.download_file(file_info.file_path)
             with open(filename(message.from_user.username, message.message_id, ".jpg", True), 'wb') as new_file:
-                new_file.write(downloaded_file)
-            bot.send_message(message.chat.id, "Фотография загружена")
+                new_file.write(get_file(message.photo[3].file_id))
+            notify(message.chat.id, message.message_id, "photo", True)
             print("New photo: " + filename(message.from_user.username, message.message_id, ".jpg", True))
         except:
             # TRY GET PHOTO MAXIMUM SIZE
             try:
-                raw = message.photo[2].file_id
-                file_info = bot.get_file(raw)
-                downloaded_file = bot.download_file(file_info.file_path)
                 with open(filename(message.from_user.username, message.message_id, ".jpg", True), 'wb') as new_file:
-                    new_file.write(downloaded_file)
-                bot.send_message(message.chat.id, "Фотография загружена")
+                    new_file.write(get_file(message.photo[2].file_id))
+                notify(message.chat.id, message.message_id, "photo", True)
                 print("New photo: " + filename(message.from_user.username, message.message_id, ".jpg", True))
             except:
-                # IF FAILED, TRY GET PHOTO MEDUIM SIZE
+                # IF FAILED, TRY GET PHOTO MEDIUM SIZE
                 try:
-                    raw = message.photo[1].file_id
-                    file_info = bot.get_file(raw)
-                    downloaded_file = bot.download_file(file_info.file_path)
                     with open(filename(message.from_user.username, message.message_id, ".jpg", True), 'wb') as new_file:
-                        new_file.write(downloaded_file)
-                    bot.send_message(message.chat.id, "Фотография загружена")
+                        new_file.write(get_file(message.photo[1].file_id))
+                    notify(message.chat.id, message.message_id, "photo", True)
                     print("New meduim photo: " + filename(message.from_user.username, message.message_id, ".jpg", True))
                 except:
                     # IF FAILED, TRY GET PHOTO MINIMUM SIZE
                     try:
-                        raw = message.photo[0].file_id
-                        file_info = bot.get_file(raw)
-                        downloaded_file = bot.download_file(file_info.file_path)
                         with open(filename(message.from_user.username, message.message_id, ".jpg", True),
                                   'wb') as new_file:
-                            new_file.write(downloaded_file)
-                        bot.send_message(message.chat.id, "Фотография загружена")
-                        print("New small photo: " + filename(message.from_user.username, message.message_id, ".jpg",
-                                                             True))
+                            new_file.write(get_file(message.photo[0].file_id))
+                        notify(message.chat.id, message.message_id, "photo", True)
+                        print("New small photo: " + filename(message.from_user.username, message.message_id, ".jpg", True))
                     # REPORT IF FAILED
                     except:
-                        bot.send_message(message.chat.id, "Ошибка загрузки фотографии (" + str(
-                            message.message_id) + "), попробуйте еще раз")
+                        notify(message.chat.id, message.message_id, "photo", False)
                         print('ERROR:\n', traceback.format_exc())
-                        # bot.send_message(message.chat.id, message)
     else:
-        bot.send_message(message.chat.id,
-                         "Неизвестный пользователь: " + message.from_user.username + "\nОбратитесь к администратору")
-        # LOGGING
+        bot.send_message(message.chat.id, "Неизвестный пользователь: " + message.from_user.username + "\nОбратитесь к администратору")
         print(message.from_user.username + " no auth (photo)")
 
 
 # SAVE VIDEO HANDLER
 @bot.message_handler(content_types=["video"])
 def get_video(message):
-    # CHECK WHITELIST
     if message.from_user.username in users:
         try:
-            raw = message.video.file_id
-            file_info = bot.get_file(raw)
-            downloaded_file = bot.download_file(file_info.file_path)
             with open(filename(message.from_user.username, message.message_id, ".mp4", True), 'wb') as new_file:
-                new_file.write(downloaded_file)
-            bot.send_message(message.chat.id, "Видео загружено")
+                new_file.write(get_file(message.video.file_id))
+            notify(message.chat.id, message.message_id, "video", True)
             print("New video: " + filename(message.from_user.username, message.message_id, ".mp4", True))
         except:
-            bot.send_message(message.chat.id, "Ошибка загрузки видео (" + str(
-                message.message_id) + "), превышение размера файла")
+            notify(message.chat.id, message.message_id, "video", False)
             print('ERROR:\n', traceback.format_exc())
     else:
-        bot.send_message(message.chat.id,
-                         "Неизвестный пользователь: " + message.from_user.username + "\nОбратитесь к администратору")
-        # LOGGING
+        bot.send_message(message.chat.id, "Неизвестный пользователь: " + message.from_user.username + "\nОбратитесь к администратору")
         print(message.from_user.username + " no auth (video)")
 
 
@@ -158,24 +162,15 @@ def get_document(message):
     # CHECK WHITELIST
     if message.from_user.username in users:
         try:
-            raw = message.document.file_id
-            file_info = bot.get_file(raw)
-            downloaded_file = bot.download_file(file_info.file_path)
-            with open(
-                    filename(message.from_user.username, message.message_id, ("_" + message.document.file_name), True),
-                    'wb') as new_file:
-                new_file.write(downloaded_file)
-            bot.send_message(message.chat.id, "Файл загружен")
-            print("New file: " + filename(message.from_user.username, message.message_id,
-                                          ("_" + message.document.file_name), False))
+            with open(filename(message.from_user.username, message.message_id, ("_" + message.document.file_name), True), 'wb') as new_file:
+                new_file.write(get_file(message.document.file_id))
+            notify(message.chat.id, message.message_id, "document", True)
+            print("New file: " + filename(message.from_user.username, message.message_id, ("_" + message.document.file_name), False))
         except:
-            bot.send_message(message.chat.id, "Ошибка загрузки документа (" + str(
-                message.message_id) + "), превышение размера файла")
+            notify(message.chat.id, message.message_id, "document", False)
             print('ERROR:\n', traceback.format_exc())
-
     else:
-        bot.send_message(message.chat.id,
-                         "Неизвестный пользователь: " + message.from_user.username + "\nОбратитесь к администратору")
+        bot.send_message(message.chat.id, "Неизвестный пользователь: " + message.from_user.username + "\nОбратитесь к администратору")
         # LOGGING
         print(message.from_user.username + " no auth (document)")
 
