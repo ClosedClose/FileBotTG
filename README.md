@@ -3,9 +3,14 @@
 This script allows you to upload files to your local drive. 
 Just send a message containing a photo, video or document to the configured bot and it will download it 
 
-The feature is the save path in the format:
+Files are saved in the following format:
+```
 PATH_TO_SAVE_FILES\date\username\all files per day
-This feature is subject to change/improvement. 
+```
+This feature is subject to change or improvement. 
+
+
+This script has a whitelist by Telegram username, don't forget to add yourself to the list 
 
 ### Usage
 
@@ -16,7 +21,7 @@ pip install pyTelegramBotAPI
 
 Fill "settings.txt" with the settings:
 ```
-BOT_TOKEN
+BOT_TOKEN 
 PATH_TO_SAVE_FILES
 NOTIFICATIONS
 ```
