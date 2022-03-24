@@ -5,8 +5,6 @@ Requires pyTelegramBotAPI:
 ```
 pip install pyTelegramBotAPI
 ```
-In case of a problem, check the rest of the dependencies in the header
-
 
 Fill "settings.txt" with the settings:
 ```
