@@ -26,6 +26,9 @@ CREATE TABLE IF NOT EXISTS users (
     date_joined TEXT
 )
 """)
+
+version= "1.2"
+
 conn.commit()
 
 def getAnekdot():
@@ -335,7 +338,7 @@ def handle_document(message):
 
 
 def main():
-    print("Welcome to FileBotTG 1.0")
+    print("Welcome to FileBotTG "+ version + "!\n")
     print("\nCurrent settings:")
     print([str(token), str(save_path), notifications])
     example_filepath = create_filepath("username", "message_id", ".jpg", do_create=False)
