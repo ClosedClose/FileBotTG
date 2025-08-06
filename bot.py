@@ -151,7 +151,7 @@ def send_failed_reaction(message):
 @bot.message_handler(commands=["start"])
 def handle_start(message):  
     keyboard = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
-    keyboard.row("ping", "yt", "anek")
+    keyboard.row("ping", "yt", "help")
 
     # Store new user in SQLite3 database
     username = message.from_user.username
