@@ -103,6 +103,32 @@ def verify_user(message):
     if message.from_user.username in users:
         return True
     print(f"\n{message.from_user.username} no auth (verify)")
+    # Determine the target user: if the message is a reply, forwarded, or from a channel/bot,
+    # use the original author's data; otherwise, use the message sender's data.
+    if message.reply_to_message and message.reply_to_message.from_user:
+        target = message.reply_to_message.from_user
+    elif getattr(message, "forward_from", None):
+        target = message.forward_from
+    elif getattr(message, "sender_chat", None):
+        target = message.sender_chat
+    else:
+        target = message.from_user
+
+    # Use 'title' as username if no username exists (e.g. for channel messages)
+    username = target.username if hasattr(target, "username") and target.username else getattr(target, "title", "Unknown")
+    user_id = getattr(target, "id", "Unknown")
+    first_name = getattr(target, "first_name", "")
+    last_name = getattr(target, "last_name", "")
+
+    bot.send_message(
+        message.chat.id,
+        f"Unauthorized access attempt detected.\n"
+        f"Username: {username}\n"
+        f"User ID: {user_id}\n"
+        f"First Name: {first_name}\n"
+        f"Last Name: {last_name}"
+    )
+
     return False
 
 
@@ -150,134 +176,136 @@ def handle_start(message):
 
 @bot.message_handler(content_types=["text"])
 def handle_text(message):
-
-    keyboard = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
-    keyboard.row("ping", "yt", "anek")
-
-    if not verify_user(message):
-        return
+    if verify_user(message):
+        
+        keyboard = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
+        keyboard.row("ping", "yt", "help")
     
-    if "https" in message.text:
-        bot.send_message(message.chat.id, "Обнаружена ссылка")
-        # Extract individual YouTube URLs even if they are concatenated together
-        pattern = r'(https?://(?:www\.)?(?:youtube\.com/(?:watch\?v=|shorts/)[\w-]+|youtu\.be/[\w-]+)[^\s]*)'
-        yt_urls = re.findall(pattern, message.text)
-        if not yt_urls:
-            notify(message.chat.id, "Unknown URL", "yt", False)
-            return
+        if "https" in message.text:
+            bot.send_message(message.chat.id, "Обнаружена ссылка")
+            # Extract individual YouTube URLs even if they are concatenated together
+            pattern = r'(https?://(?:www\.)?(?:youtube\.com/(?:watch\?v=|shorts/)[\w-]+|youtu\.be/[\w-]+)[^\s]*)'
+            yt_urls = re.findall(pattern, message.text)
+            if not yt_urls:
+                notify(message.chat.id, "Unknown URL", "yt", False)
+                return
 
-        for yt_url in yt_urls:
-            try:
-                print("Detected YouTube URL")
+            for yt_url in yt_urls:
+                try:
+                    print("Detected YouTube URL")
 
-                # Create the output folder for today's videos
-                date_folder = save_path / str(date.today())
-                date_folder.mkdir(parents=True, exist_ok=True)
-                output_template = str(date_folder / "%(title)s-%(id)s.%(ext)s")
+                    # Create the output folder for today's videos
+                    date_folder = save_path / str(date.today())
+                    date_folder.mkdir(parents=True, exist_ok=True)
+                    output_template = str(date_folder / "%(title)s-%(id)s.%(ext)s")
 
+                    result = subprocess.run(
+                        ["yt-dlp.exe", "-i", "-o", output_template, yt_url],
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE,
+                        text=True
+                    )
+                    if result.returncode == 0 or "has already been downloaded" in result.stdout:
+                        print("yt-dlp download succeeded! (" + str(result.returncode) + ")")
+                        send_reaction(message, "\U0001F44D")
+                    else:
+                        print("yt-dlp download failed! (" + str(result.returncode) + ")")
+                        send_reaction(message, "\U0001F44E")
+                except Exception as error:
+                    print("Error in yt-dlp download:", error)
+                    notify(message.chat.id, yt_url, "yt", False)
+
+        if "ping" in message.text and verify_user(message):
+            bot.send_message(message.chat.id, "Pong!")
+
+        if "help" in message.text and verify_user(message):
+            help_text = (
+                "FileBotTG 1.0\n"
+                "\n"
+                "Available commands:\n"
+                "/start - Start the bot\n"
+                "/help - Show this help message\n"
+                "/ping - Check if the bot is alive\n"
+                "/random - Get a random number\n"
+                "/date - Get the current date\n"
+                "/time - Get the current time\n"
+                "/users - List current users\n"
+                "/settings - Show bot settings\n"
+                "/anek - Show random anekdot\n"
+                "\n"
+                "Send text, photos, videos, or documents to save them.\n"
+                "You can also send YouTube links for downloading."
+            )
+            bot.send_message(message.chat.id, help_text)
+
+        if "yt" in message.text and verify_user(message):
+            if platform == "win32":
+                result = subprocess.run(["ping", "-n", "1", "youtube.com"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                if result.returncode == 0:
+                    bot.send_message(message.chat.id, "Ping to youtube.com succeeded")
+                else:
+                    bot.send_message(message.chat.id, "Ping to youtube.com failed")
+            else:
                 result = subprocess.run(
-                    ["yt-dlp.exe", "-i", "-o", output_template, yt_url],
+                    ["ping", "-c", "1", "youtube.com"],
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     text=True
                 )
-                if result.returncode == 0 or "has already been downloaded" in result.stdout:
-                    print("yt-dlp download succeeded! (" + str(result.returncode) + ")")
-                    send_reaction(message, "\U0001F44D")
+                if result.returncode == 0:
+                    bot.send_message(message.chat.id, "Ping to youtube.com succeeded")
                 else:
-                    print("yt-dlp download failed! (" + str(result.returncode) + ")")
-                    send_reaction(message, "\U0001F44E")
-            except Exception as error:
-                print("Error in yt-dlp download:", error)
-                notify(message.chat.id, yt_url, "yt", False)
+                    bot.send_message(message.chat.id, "Ping to youtube.com failed")
 
-    if "ping" in message.text and verify_user(message):
-        bot.send_message(message.chat.id, "Pong!")
+        if "random" in message.text and verify_user(message):
+            random_number = random.randint(1, 100)
+            bot.send_message(message.chat.id, f"Random number: {random_number}")
 
-    if "help" in message.text and verify_user(message):
-        help_text = (
-            "FileBotTG 1.0\n"
-            "\n"
-            "Available commands:\n"
-            "/start - Start the bot\n"
-            "/help - Show this help message\n"
-            "/ping - Check if the bot is alive\n"
-            "/random - Get a random number\n"
-            "/date - Get the current date\n"
-            "/time - Get the current time\n"
-            "/users - List current users\n"
-            "/settings - Show bot settings\n"
-            "/anek - Show random anekdot\n"
-            "\n"
-            "Send text, photos, videos, or documents to save them.\n"
-            "You can also send YouTube links for downloading."
-        )
-        bot.send_message(message.chat.id, help_text)
+        if "date" in message.text and verify_user(message):
+            current_date = date.today().strftime("%Y-%m-%d")
+            bot.send_message(message.chat.id, f"Current date: {current_date}") 
 
-    if "yt" in message.text and verify_user(message):
-        if platform == "win32":
-            result = subprocess.run(["ping", "-n", "1", "youtube.com"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-            if result.returncode == 0:
-                bot.send_message(message.chat.id, "Ping to youtube.com succeeded")
+        if "time" in message.text and verify_user(message):
+            current_time = datetime.now().strftime("%H:%M:%S")
+            bot.send_message(message.chat.id, f"Current time: {current_time}")
+        
+        if "users" in message.text and verify_user(message):
+            cursor.execute("SELECT id, username, first_name, last_name, date_joined FROM users ORDER BY date_joined DESC LIMIT 10")
+            user_list = cursor.fetchall()
+            total_users = cursor.execute("SELECT COUNT(*) FROM users").fetchone()[0]
+
+            if user_list:
+                users_info = "\n".join([
+                    f"ID: {user[0]}, Username: {user[1]}, First Name: {user[2]}, Last Name: {user[3]}, Joined: {user[4]}"
+                    for user in user_list
+                ])
+                bot.send_message(message.chat.id, f"Total users: " + str(total_users))
+                bot.send_message(message.chat.id, f"Current users:\n{users_info}")
             else:
-                bot.send_message(message.chat.id, "Ping to youtube.com failed")
-        else:
-            result = subprocess.run(
-                ["ping", "-c", "1", "youtube.com"],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True
+                bot.send_message(message.chat.id, "No users found.")
+        
+        if "admins" in message.text and verify_user(message):
+            users_list = "\n".join(users)
+            bot.send_message(message.chat.id, f"Current users:\n{users_list}")
+
+        if "settings" in message.text and verify_user(message):
+            settings_info = (
+                f"Platform: {platform}\n"
+                f"Token: *****\n"
+                f"Save Path: {save_path}\n"
+                f"Notifications: {'Enabled' if notifications else 'Disabled'}\n"
+                f"Users: {', '.join(users)}\n"
             )
-            if result.returncode == 0:
-                bot.send_message(message.chat.id, "Ping to youtube.com succeeded")
-            else:
-                bot.send_message(message.chat.id, "Ping to youtube.com failed")
+            bot.send_message(message.chat.id, settings_info)
 
-    if "random" in message.text and verify_user(message):
-        random_number = random.randint(1, 100)
-        bot.send_message(message.chat.id, f"Random number: {random_number}")
-
-    if "date" in message.text and verify_user(message):
-        current_date = date.today().strftime("%Y-%m-%d")
-        bot.send_message(message.chat.id, f"Current date: {current_date}") 
-
-    if "time" in message.text and verify_user(message):
-        current_time = datetime.now().strftime("%H:%M:%S")
-        bot.send_message(message.chat.id, f"Current time: {current_time}")
-    
-    if "users" in message.text and verify_user(message):
-        cursor.execute("SELECT id, username, first_name, last_name, date_joined FROM users ORDER BY date_joined DESC LIMIT 10")
-        user_list = cursor.fetchall()
-        total_users = cursor.execute("SELECT COUNT(*) FROM users").fetchone()[0]
-
-        if user_list:
-            users_info = "\n".join([
-                f"ID: {user[0]}, Username: {user[1]}, First Name: {user[2]}, Last Name: {user[3]}, Joined: {user[4]}"
-                for user in user_list
-            ])
-            bot.send_message(message.chat.id, f"Total users: " + str(total_users))
-            bot.send_message(message.chat.id, f"Current users:\n{users_info}")
-        else:
-            bot.send_message(message.chat.id, "No users found.")
-    
-    if "admins" in message.text and verify_user(message):
-        users_list = "\n".join(users)
-        bot.send_message(message.chat.id, f"Current users:\n{users_list}")
-
-    if "settings" in message.text and verify_user(message):
-        settings_info = (
-            f"Platform: {platform}\n"
-            f"Token: *****\n"
-            f"Save Path: {save_path}\n"
-            f"Notifications: {'Enabled' if notifications else 'Disabled'}\n"
-            f"Users: {', '.join(users)}\n"
-        )
-        bot.send_message(message.chat.id, settings_info)
-
-    if "anek" in message.text and verify_user(message):
-        anek = getAnekdot()
-        bot.send_message(message.chat.id, anek, reply_markup=keyboard)
-    
+        if "anek" in message.text and verify_user(message):
+            anek = getAnekdot()
+            bot.send_message(message.chat.id, anek, reply_markup=keyboard)
+        
+        if "stop" in message.text and verify_user(message):
+            bot.send_message(message.chat.id, "Bot is stopping...")
+            print("Bot stopped by user request.")
+            os._exit(0)   
 
 
 
