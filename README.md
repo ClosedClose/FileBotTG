@@ -14,7 +14,7 @@ This script has a whitelist by Telegram username, don't forget to add yourself t
 
 ### Usage
 
-Run "install.bat"
+Run "install.bat", script will download all requirements (pip, ffmpeg, yt-dlp) 
 
 Fill "settings.txt" with the settings:
 ```
@@ -34,4 +34,5 @@ etc
 Run "run.bat"
 
 ![cover](/cover.png)
+
 
