@@ -54,9 +54,9 @@ if platform == "win32":
     kernel32.SetConsoleOutputCP(65001)
 
 def load_settings():
-    settings_path = Path("settings.txt")
+    settings_path = Path("settings.cfg")
     if not settings_path.exists():
-        settings_path.write_text("erase_me_and_put_BOT_TOKEN\nerase_me_and_put_SAVE_PATH\n1\n")
+        settings_path.write_text("YOUR_BOT_TOKEN\nPATH_TO_SAVE_FILES\nTrue\nPOSITIVE_REACTION\nNEGATIVE_REACTION\n")
     lines = settings_path.read_text().splitlines()
     token = lines[0]
     save_path = Path(lines[1])
@@ -65,7 +65,7 @@ def load_settings():
 
 
 def load_users():
-    whitelist_path = Path("whitelist.txt")
+    whitelist_path = Path("whitelist.cfg")
     if not whitelist_path.exists():
         whitelist_path.write_text("erase_me_and_put_users_one_per_line\n")
     return whitelist_path.read_text().splitlines()
