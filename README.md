@@ -50,7 +50,7 @@
    - `YOUR_BOT_TOKEN`: Obtain from [BotFather](https://t.me/BotFather).
    - `PATH_TO_SAVE_FILES`: Local directory where files will be saved (e.g., `C:\Downloads` or `/home/user/downloads`).
    - `POSITIVE_REACTION`: to Emoji code
-   - `POSITIVE_REACTION`: to Emoji code
+   - `NEGATIVE_REACTION`: to Emoji code
 
 2. **Create `whitelist.cfg`**:
     First run and stop bot to create a file named `whitelist.cfg` and list Telegram usernames of authorized users (one per line, no comments):
@@ -104,6 +104,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 © 2025 ClosedClose
 ```
+
 
 
 
