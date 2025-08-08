@@ -229,7 +229,7 @@ def handle_text(message):
                 "/random - Get a random number\n"
                 "/date - Get the current date\n"
                 "/time - Get the current time\n"
-                "/users - List current users\n"
+                "/users - List bot visitors\n"
                 "/settings - Show bot settings\n"
                 "/anek - Show random anekdot\n"
                 "\n"
