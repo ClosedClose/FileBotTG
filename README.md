@@ -1,17 +1,15 @@
-<div style="display: flex; align-items: center; justify-content: center;">
-  <img src="https://raw.githubusercontent.com/ClosedClose/FileBotTG/refs/heads/main/icons/icon_48.png" height="48" style="margin-right: 10px;">
-  <h1 style="display: inline;">Welcome to FileBotTG 1.3</h1>
-</div>
+### Welcome to FileBotTG 1.3
 
+![alt text](./cover.png)
 ---
 
 **FileBotTG** is a private, asynchronous Telegram bot designed to download files (photos, videos, documents) sent to it directly to your local drive. With a simple setup and a whitelist for user access, it ensures secure and efficient file management.
 
 ## Features
 - **Asynchronous Downloads**: Quickly download files sent to the bot (photos, videos, or documents).
-- **Organized File Storage**: Files are saved in a structured format: `PATH_TO_SAVE_FILES/date/username/*all files per day*`.
-- **Whitelist Security**: Only users listed in `whitelist.txt` can interact with the bot.
-- **Customizable Notifications**: Configure notification settings via `settings.txt`.
+- **Whitelist Security**: Only users listed in `whitelist.cfg` can interact with the bot.
+- **Reactions**: Feedback with custom reactions defined via `settings.cfg`. (not all works with API)
+- **Custom path**: Free to set any output directory (e.g., `C:\Downloads` or `/home/user/downloads`).
 - **Easy Setup**: Install dependencies and run the bot with simple batch scripts.
 
 *Note*: File storage structure may be improved or changed in future releases.
@@ -40,19 +38,22 @@
      ```
 
 ## Configuration
-1. **Create `settings.txt`**:
-   Create a file named `settings.txt` in the project root and add the following (one per line, no comments):
+1. **Change `settings.cfg`**:
+   First run and stop bot to create a file named `settings.cfg` in the project root, then add the following (one per line, no comments):
    ```
    YOUR_BOT_TOKEN
    PATH_TO_SAVE_FILES
    NOTIFICATIONS
+   POSITIVE_REACTION
+   NEGATIVE_REACTION
    ```
    - `YOUR_BOT_TOKEN`: Obtain from [BotFather](https://t.me/BotFather).
    - `PATH_TO_SAVE_FILES`: Local directory where files will be saved (e.g., `C:\Downloads` or `/home/user/downloads`).
-   - `NOTIFICATIONS`: Set to `True` or `False` to enable/disable notifications.
+   - `POSITIVE_REACTION`: to Emoji code
+   - `NEGATIVE_REACTION`: to Emoji code
 
-2. **Create `whitelist.txt`**:
-   Create a file named `whitelist.txt` and list Telegram usernames of authorized users (one per line, no comments):
+2. **Create `whitelist.cfg`**:
+    First run and stop bot to create a file named `whitelist.cfg` and list Telegram usernames of authorized users (one per line, no comments):
    ```
    username1
    username2
@@ -77,14 +78,14 @@ FileBotTG/
 ├── install.bat           # Installs dependencies (Windows)
 ├── run.bat              # Runs the bot (Windows)
 ├── main.py              # Main bot script
-├── settings.txt         # Configuration file
-├── whitelist.txt        # Authorized users
+├── settings.cfg         # Configuration file
+├── whitelist.cfg        # Authorized users
 └── requirements.txt     # Python dependencies
 ```
 
 ## Notes
-- Ensure `settings.txt` and `whitelist.txt` have no trailing spaces or comments.
-- Add yourself to `whitelist.txt` to use the bot.
+- Ensure `settings.cfg` and `whitelist.cfg` have no trailing spaces or comments.
+- Add yourself to `whitelist.cfg` to use the bot.
 - For advanced customization, review the bot's source code in `main.py`.
 
 ## Contributing
@@ -103,3 +104,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 © 2025 ClosedClose
 ```
+
+
+
+
