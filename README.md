@@ -9,7 +9,7 @@
 - **Asynchronous Downloads**: Quickly download files sent to the bot (photos, videos, or documents).
 - **Whitelist Security**: Only users listed in `whitelist.cfg` can interact with the bot.
 - **Reactions**: Feedback with custom reactions defined via `settings.cfg`. (not all works with API)
-- **Custom path**: Files are saved in a structured format: `PATH_TO_SAVE_FILES/date/username/*all files per day*`.
+- **Custom path**: Free to set any output directory (e.g., `C:\Downloads` or `/home/user/downloads`).
 - **Easy Setup**: Install dependencies and run the bot with simple batch scripts.
 
 *Note*: File storage structure may be improved or changed in future releases.
@@ -104,5 +104,6 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 © 2025 ClosedClose
 ```
+
 
 
