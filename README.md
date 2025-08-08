@@ -1,8 +1,6 @@
-<div style="display: flex; align-items: center; justify-content: center;">
-  <img src="https://raw.githubusercontent.com/ClosedClose/FileBotTG/refs/heads/main/icons/icon_48.png" height="48" style="margin-right: 10px;">
-  <h1 style="display: inline;">Welcome to FileBotTG 1.3</h1>
-</div>
+### Welcome to FileBotTG 1.3
 
+![alt text](./cover.png)
 ---
 
 **FileBotTG** is a private, asynchronous Telegram bot designed to download files (photos, videos, documents) sent to it directly to your local drive. With a simple setup and a whitelist for user access, it ensures secure and efficient file management.
@@ -103,3 +101,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 © 2025 ClosedClose
 ```
+
