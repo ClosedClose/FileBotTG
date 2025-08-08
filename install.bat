@@ -14,7 +14,7 @@ if %ERRORLEVEL% neq 0 (
 )
 
 echo Installing dependencies from requirements.txt...
-pip install -r req.txt
+pip install -r requirements.txt
 if %ERRORLEVEL% neq 0 (
     echo Failed to install dependencies.
     exit /b %ERRORLEVEL%
