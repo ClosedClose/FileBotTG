@@ -1,7 +1,7 @@
 ![alt text](https://raw.githubusercontent.com/ClosedClose/FileBotTG/refs/heads/main/icons/icon_128.png) 
 ## Welcome to FileBotTG 1.3
 
-This script allows you to upload files to your local drive. 
+Async bot to download files to your local drive. 
 Just send a message containing a photo, video or document to the configured bot and it will download it 
 
 Files are saved in the following format:
@@ -35,6 +35,7 @@ etc
 Run "run.bat"
 
 ![cover](/cover.png)
+
 
 
 
