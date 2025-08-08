@@ -1,4 +1,5 @@
-![alt text](https://raw.githubusercontent.com/ClosedClose/FileBotTG/refs/heads/main/icons/icon_48.png) ## Welcome to FileBotTG 1.2
+
+|![alt text](https://raw.githubusercontent.com/ClosedClose/FileBotTG/refs/heads/main/icons/icon_48.png)| ## Welcome to FileBotTG 1.2|
 
 This script allows you to upload files to your local drive. 
 Just send a message containing a photo, video or document to the configured bot and it will download it 
@@ -34,6 +35,7 @@ etc
 Run "run.bat"
 
 ![cover](/cover.png)
+
 
 
 
