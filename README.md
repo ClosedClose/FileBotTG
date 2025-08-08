@@ -5,16 +5,16 @@ Just send a message containing a photo, video or document to the configured bot 
 
 Files are saved in the following format:
 ```
-PATH_TO_SAVE_FILES\date\username\all files per day
+PATH_TO_SAVE_FILES\date\username\*all files per day*
 ```
 This feature is subject to change or improvement. 
 
 
-This script has a whitelist by Telegram username, don't forget to add yourself to the list 
+This script has a whitelist by Telegram username, don't forget to add yourself to the whitelist.txt 
 
 ### Usage
 
-Run "install.bat"
+Run "install.bat", script will download all requirements (pip, ffmpeg, yt-dlp) 
 
 Fill "settings.txt" with the settings:
 ```
@@ -34,3 +34,5 @@ etc
 Run "run.bat"
 
 ![cover](/cover.png)
+
+
