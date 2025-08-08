@@ -1,4 +1,4 @@
-<img src="[https://example.com/logo.png](https://raw.githubusercontent.com/ClosedClose/FileBotTG/refs/heads/main/icons/icon_48.png)" height="48" style="vertical-align: middle; margin-right: 10px;"> <h1 style="display: inline;">Welcome to FileBotTG 1.3</h1>
+<img src="https://raw.githubusercontent.com/ClosedClose/FileBotTG/refs/heads/main/icons/icon_48.png" height="48" style="vertical-align: middle; margin-right: 10px;"> <h1 style="display: inline;">Welcome to FileBotTG 1.3</h1>
 
 This script allows you to upload files to your local drive. 
 Just send a message containing a photo, video or document to the configured bot and it will download it 
